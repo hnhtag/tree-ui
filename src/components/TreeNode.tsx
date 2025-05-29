@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { TreeNodeDto } from "../dto/TreeNodeDto";
 import { Button } from "./ui/button";
 import {
@@ -15,6 +15,7 @@ import { Input } from "./ui/input";
 interface TreeNodeProps {
   currentNode: TreeNodeDto;
   parentId?: string;
+  isExpanded?: boolean;
   loadChildren?: (id: string) => Promise<TreeNodeDto | null>;
 }
 
@@ -22,6 +23,7 @@ export const TreeNode = ({
   currentNode,
   loadChildren,
   parentId,
+  isExpanded = false,
 }: TreeNodeProps) => {
   const [expanded, setExpanded] = useState(false);
   const [children, setChildren] = useState<TreeNodeDto[]>([]);
@@ -79,13 +81,24 @@ export const TreeNode = ({
     setInputValue("");
   };
 
+  useEffect(() => {
+    if (isExpanded && currentNode.children?.length > 0) {
+      setChildren(currentNode.children);
+      if (
+        !expanded &&
+        currentNode.hasChildren &&
+        currentNode.children.length > 0
+      ) {
+        setExpanded(true);
+      }
+    }
+  }, [currentNode, isExpanded]);
+
   return (
     <div
       className={`ml-1 mt-2 ${
         parentId && "border-l-1 border-gray-300 border-dashed"
       }`}
-      onMouseOver={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
     >
       <div
         className={`flex items-center gap-2 ${
@@ -117,13 +130,17 @@ export const TreeNode = ({
             </Button>
           </>
         ) : (
-          <>
-            <div className="text-black h-9  flex items-center">
+          <div
+            className="flex gap-3"
+            onMouseOver={() => setHovering(true)}
+            onMouseLeave={() => setHovering(false)}
+          >
+            <div className="text-black h-9 flex items-center">
               <span>{currentNode.name}</span>
             </div>
 
             {hovering && (
-              <>
+              <div>
                 <Button
                   size="icon"
                   variant="ghost"
@@ -141,11 +158,25 @@ export const TreeNode = ({
                 >
                   <Plus size={16} />
                 </Button>
-              </>
+              </div>
             )}
-          </>
+          </div>
         )}
       </div>
+
+      {expanded && children.length > 0 && (
+        <div className="ml-4">
+          {children.map((child) => (
+            <TreeNode
+              key={child.id}
+              currentNode={child}
+              parentId={currentNode.id}
+              loadChildren={loadChildren}
+              isExpanded={isExpanded}
+            />
+          ))}
+        </div>
+      )}
 
       {adding && (
         <div className="ml-6 flex items-center gap-2 mt-2">
@@ -161,19 +192,6 @@ export const TreeNode = ({
           <Button size="icon" variant="ghost" onClick={() => setAdding(false)}>
             <X size={16} />
           </Button>
-        </div>
-      )}
-
-      {expanded && children.length > 0 && (
-        <div className="ml-4">
-          {children.map((child) => (
-            <TreeNode
-              key={child.id}
-              currentNode={child}
-              parentId={currentNode.id}
-              loadChildren={loadChildren}
-            />
-          ))}
         </div>
       )}
     </div>

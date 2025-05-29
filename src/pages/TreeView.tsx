@@ -15,7 +15,7 @@ export default function TreeView() {
     <Card className="p-4">
       <h2 className="text-xl font-bold mb-4 text-black">Tree Nodes (Flat)</h2>
       {tree.map((node) => (
-        <TreeNode key={node.id} currentNode={node} />
+        <TreeNode key={node.id} currentNode={node} isExpanded={true} />
       ))}
     </Card>
   );
