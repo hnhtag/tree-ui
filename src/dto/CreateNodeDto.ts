@@ -1,4 +1,4 @@
 export interface CreateNodeDto {
-  name: string
-  parentId: string
+  name: string;
+  parentId: string | null;
 }
