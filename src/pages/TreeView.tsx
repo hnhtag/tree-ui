@@ -13,7 +13,7 @@ export default function TreeView() {
 
   return (
     <Card className="p-4">
-      <h2 className="text-xl font-bold mb-4 text-black">Tree Nodes</h2>
+      <h2 className="text-xl font-bold mb-4 text-black">Tree Nodes (Flat)</h2>
       {tree.map((node) => (
         <TreeNode key={node.id} currentNode={node} />
       ))}

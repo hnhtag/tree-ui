@@ -28,6 +28,7 @@ export const TreeNode = ({
   const [editing, setEditing] = useState(false);
   const [adding, setAdding] = useState(false);
   const [inputValue, setInputValue] = useState(currentNode.name);
+  const [hovering, setHovering] = useState(false);
 
   const handleExpand = async () => {
     if (!expanded && currentNode.hasChildren) {
@@ -79,8 +80,18 @@ export const TreeNode = ({
   };
 
   return (
-    <div className="ml-4 mt-2">
-      <div className="flex items-center gap-2">
+    <div
+      className={`ml-1 mt-2 ${
+        parentId && "border-l-1 border-gray-300 border-dashed"
+      }`}
+      onMouseOver={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
+    >
+      <div
+        className={`flex items-center gap-2 ${
+          !currentNode.hasChildren && "pl-10"
+        }`}
+      >
         {currentNode.hasChildren && (
           <Button size="icon" variant="ghost" onClick={handleExpand}>
             {expanded ? <ChevronDown /> : <ChevronRight />}
@@ -94,7 +105,7 @@ export const TreeNode = ({
               onChange={(e) => setInputValue(e.target.value)}
               className="w-48 text-black"
             />
-            <Button size="sm" onClick={handleEditSave}>
+            <Button size="sm" variant="outline" onClick={handleEditSave}>
               Save
             </Button>
             <Button
@@ -107,20 +118,31 @@ export const TreeNode = ({
           </>
         ) : (
           <>
-            <span className="text-black">{currentNode.name}</span>
-            <Button size="icon" variant="link" onClick={() => setEditing(true)}>
-              <Pencil size={16} />
-            </Button>
-            <Button size="icon" variant="default" onClick={handleDelete}>
-              <Trash size={16} />
-            </Button>
-            <Button
-              size="icon"
-              variant="default"
-              onClick={() => setAdding(true)}
-            >
-              <Plus size={16} />
-            </Button>
+            <div className="text-black h-9  flex items-center">
+              <span>{currentNode.name}</span>
+            </div>
+
+            {hovering && (
+              <>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => setEditing(true)}
+                >
+                  <Pencil size={8} />
+                </Button>
+                <Button size="icon" variant="ghost" onClick={handleDelete}>
+                  <Trash size={16} />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => setAdding(true)}
+                >
+                  <Plus size={16} />
+                </Button>
+              </>
+            )}
           </>
         )}
       </div>
@@ -133,7 +155,7 @@ export const TreeNode = ({
             placeholder="New child node name"
             className="w-48 text-black"
           />
-          <Button size="sm" onClick={handleAddChild}>
+          <Button size="sm" variant="outline" onClick={handleAddChild}>
             Add
           </Button>
           <Button size="icon" variant="ghost" onClick={() => setAdding(false)}>

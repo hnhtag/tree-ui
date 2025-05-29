@@ -20,7 +20,7 @@ export default function TreeViewLazy() {
 
   return (
     <Card className="p-4">
-      <h2 className="text-xl font-bold mb-4 text-black">Tree Nodes</h2>
+      <h2 className="text-xl font-bold mb-4 text-black">Tree Nodes (Lazy Load)</h2>
       {roots.map((root) => (
         <TreeNode
           key={root.id}
